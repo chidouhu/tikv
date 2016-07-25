@@ -356,6 +356,15 @@ fn build_cfg(matches: &Matches, config: &toml::Value, cluster_id: u64, addr: &st
                           Some(8 * 1024 * 1024),
                           |v| v.as_integer()) as u64;
 
+    let max_peer_down_secs =
+        get_integer_value("max-peer-down-duration",
+                          "raftstore.max-peer-down-duration",
+                          matches,
+                          config,
+                          Some(60),
+                          |v| v.as_integer()) as u64;
+    cfg.raft_store.max_peer_down_duration = Duration::from_secs(max_peer_down_secs);
+
     cfg.raft_store.pd_heartbeat_tick_interval =
         get_integer_value("pd-heartbeat-tick-interval",
                           "raftstore.pd-heartbeat-tick-interval",
@@ -371,6 +380,7 @@ fn build_cfg(matches: &Matches, config: &toml::Value, cluster_id: u64, addr: &st
                           config,
                           Some(10000),
                           |v| v.as_integer()) as u64;
+
     cfg.storage.sched_notify_capacity =
         get_integer_value("",
                           "storage.scheduler-notify-capacity",
