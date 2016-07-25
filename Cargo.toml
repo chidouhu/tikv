@@ -52,7 +52,8 @@ nix = "0.6.0"
 git = "https://github.com/rust-lang-nursery/getopts"
 
 [dependencies.rocksdb]
-git = "https://github.com/ngaut/rust-rocksdb.git"
+git = "https://github.com/busyjay/rust-rocksdb.git"
+branch = "busyjay/fix-header-not-found"
 
 [dependencies.protobuf]
 git = "https://github.com/stepancheg/rust-protobuf.git"
