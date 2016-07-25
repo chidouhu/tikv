@@ -14,7 +14,7 @@
 use std::sync::Arc;
 use storage::{Storage, Engine, Key, Value, KvPair, Mutation, Result};
 use storage::config::Config;
-use kvproto::kvrpcpb::Context;
+use kvproto::kvrpcpb::{Context, LockInfo};
 
 /// `SyncStorage` wraps `Storage` with sync API, usually used for testing.
 pub struct SyncStorage(Storage);
@@ -106,6 +106,16 @@ impl SyncStorage {
 
     pub fn rollback_then_get(&self, ctx: Context, key: Key, lock_ts: u64) -> Result<Option<Value>> {
         let e = async!(|cb| try!(self.0.async_rollback_then_get(ctx, key, lock_ts, cb)));
+        await!(e).unwrap().into()
+    }
+
+    pub fn scan_lock(&self, ctx: Context, max_ts: u64) -> Result<Vec<LockInfo>> {
+        let e = async!(|cb| try!(self.0.async_scan_lock(ctx, max_ts, cb)));
+        await!(e).unwrap().into()
+    }
+
+    pub fn resolve_lock(&self, ctx: Context, start_ts: u64, commit_ts: Option<u64>) -> Result<()> {
+        let e = async!(|cb| try!(self.0.async_resolve_lock(ctx, start_ts, commit_ts, cb)));
         await!(e).unwrap().into()
     }
 }
